@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { signIn } from "@/lib/auth.functions";
@@ -98,6 +98,12 @@ function AuthPage() {
             {busy ? "Please wait…" : "Sign in"}
           </Button>
         </form>
+        <Link
+          to="/demo-wallet"
+          className="mt-4 block text-center text-xs text-primary hover:underline"
+        >
+          Test senangPay with a demo wallet (no sign-in)
+        </Link>
       </div>
     </div>
   );

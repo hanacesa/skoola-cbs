@@ -13,7 +13,7 @@
  *
  * Provider statuses are normalised to the CBS canonical set via status_mapping.
  */
-import { createHmac } from "crypto";
+import { createHash, createHmac, randomUUID } from "crypto";
 
 export type ProviderRow = {
   id: string;
@@ -67,6 +67,10 @@ export type ChargeInput = {
   methodCode?: string | null;
   description?: string;
   metadata?: Record<string, unknown>;
+  /** Payer details; some gateways (senangPay / DOKU) reject charges without them. */
+  customer?: { name: string; email?: string | null; phone?: string | null };
+  /** Where the provider sends the payer after checkout. */
+  returnUrl?: string;
 };
 
 type Canonical = "PENDING" | "SUCCEEDED" | "FAILED";
@@ -186,7 +190,31 @@ function buildBody(config: ProviderConfig, input: ChargeInput) {
     if (input.description) body[config.description_field ?? "description"] = input.description;
   }
   if (input.metadata) body["metadata"] = input.metadata;
+  if (input.customer && body["customer"] === undefined) body["customer"] = input.customer;
   return { ...body, ...(config.extra_body ?? {}) };
+}
+
+/** DOKU-style request signing (senangPay sandbox): Client-Id / Request-Id / Timestamp / Target / Digest. */
+function isDokuStyle(provider: ProviderRow, baseUrl: string) {
+  return provider.auth_type === "SIGNATURE" && /doku\.com/i.test(baseUrl);
+}
+
+function dokuHeaders(creds: Record<string, string>, target: string, body: string | null) {
+  const clientId = creds["client_id"];
+  const secret = creds["secret_key"];
+  if (!clientId || !secret) throw new Error("Missing Client ID or Secret Key for this provider.");
+  const requestId = randomUUID();
+  const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+  let component = `Client-Id:${clientId}\nRequest-Id:${requestId}\nRequest-Timestamp:${timestamp}\nRequest-Target:${target}`;
+  if (body !== null) component += `\nDigest:${createHash("sha256").update(body).digest("base64")}`;
+  return {
+    "Client-Id": clientId,
+    "Request-Id": requestId,
+    "Request-Timestamp": timestamp,
+    Signature: `HMACSHA256=${createHmac("sha256", secret).update(component).digest("base64")}`,
+    "Content-Type": "application/json",
+    accept: "application/json",
+  };
 }
 
 /** Create a charge / top-up intent with the provider. */
@@ -211,6 +239,34 @@ export async function createProviderCharge(provider: ProviderRow, input: ChargeI
   }
 
   const creds = await credentialsOf(provider);
+  if (isDokuStyle(provider, baseUrl)) {
+    const target = provider.charge_path || "/checkout/v1/payment";
+    const callback = input.returnUrl
+      ? `${input.returnUrl}${input.returnUrl.includes("?") ? "&" : "?"}reference=${encodeURIComponent(input.reference)}`
+      : undefined;
+    const bodyText = JSON.stringify({
+      order: {
+        amount: Number(input.amount.toFixed(2)),
+        invoice_number: input.reference,
+        currency: input.currency,
+        ...(callback ? { callback_url: callback } : {}),
+      },
+      payment: { payment_due_date: 60 },
+      customer: {
+        name: input.customer?.name || "CBS Customer",
+        email: input.customer?.email || "customer@example.com",
+        phone: input.customer?.phone || "60123456789",
+      },
+    });
+    const res = await fetch(`${baseUrl.replace(/\/$/, "")}${target}`, {
+      method: "POST",
+      headers: dokuHeaders(creds, target, bodyText),
+      body: bodyText,
+    });
+    const raw = (await res.json().catch(() => ({}))) as { response?: { payment?: { url?: string } } };
+    const url = raw.response?.payment?.url ?? null;
+    return { providerReference: input.reference, status: res.ok && url ? "PENDING" : "FAILED", checkoutUrl: url, simulated: false, raw };
+  }
   const bodyText = JSON.stringify(buildBody(config, input));
   const path = (provider.charge_path || "/v1/charges").replace(/\{(\w+)\}/g, (_, k: string) => creds[k] ?? "");
   const response = await fetch(`${baseUrl.replace(/\/$/, "")}${path}`, {
@@ -256,6 +312,13 @@ export async function fetchProviderCharge(
   if (!baseUrl || config.simulate) return { status: "SUCCEEDED", raw: { simulated: true } };
 
   const creds = await credentialsOf(provider);
+  if (isDokuStyle(provider, baseUrl)) {
+    const target = (provider.status_path || "/orders/v1/status/{id}").replace("{id}", encodeURIComponent(providerReference));
+    const res = await fetch(`${baseUrl.replace(/\/$/, "")}${target}`, { headers: dokuHeaders(creds, target, null) });
+    const raw = (await res.json().catch(() => ({}))) as { transaction?: { status?: string } };
+    const st = String(raw.transaction?.status ?? "PENDING").toUpperCase();
+    return { status: st === "SUCCESS" ? "SUCCEEDED" : ["FAILED", "EXPIRED", "CANCELLED"].includes(st) ? "FAILED" : "PENDING", raw };
+  }
   const path = (provider.status_path || "/v1/charges/{id}").replace("{id}", encodeURIComponent(providerReference));
   const response = await fetch(`${baseUrl.replace(/\/$/, "")}${path}`, {
     method: provider.status_method || "GET",

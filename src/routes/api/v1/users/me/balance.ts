@@ -59,7 +59,7 @@ export const Route = createFileRoute(
           return Response.json({
             success: true,
             availableBalance:
-              Number(wallet.available_balance) || 0
+              Number(wallet?.available_balance) || 0
           })
 
         } catch (error: any) {

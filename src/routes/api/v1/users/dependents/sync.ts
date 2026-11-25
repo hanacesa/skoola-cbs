@@ -7,7 +7,7 @@ export const Route = createFileRoute('/api/v1/users/dependents/sync')({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const configuredKey = process.env.CBS_SKOOLA_SYNC_API_KEY
+          const configuredKey = process.env["CBS_SKOOLA_SYNC_API_KEY"]
 
           const authorization = request.headers.get('authorization') || ''
           const providedKey = authorization.startsWith('Bearer ')
@@ -70,7 +70,7 @@ export const Route = createFileRoute('/api/v1/users/dependents/sync')({
             [
               guardian_id,
               child_id,
-              process.env.CBS_SKOOLA_ORGANIZATION_ID,
+              process.env["CBS_SKOOLA_ORGANIZATION_ID"],
             ],
           )
 

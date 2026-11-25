@@ -14,22 +14,28 @@ import { Route as AdjustmentsRouteImport } from './routes/adjustments'
 import { Route as AuditRouteImport } from './routes/audit'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ClustersRouteImport } from './routes/clusters'
+import { Route as DemoWalletRouteImport } from './routes/demo-wallet'
 import { Route as DependentsRouteImport } from './routes/dependents'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as MerchantsRouteImport } from './routes/merchants'
 import { Route as OrganizationsRouteImport } from './routes/organizations'
+import { Route as PaymentTestRouteImport } from './routes/payment-test'
 import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as RegistrationRouteImport } from './routes/registration'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as TransfersRouteImport } from './routes/transfers'
 import { Route as UsersRouteImport } from './routes/users'
+import { Route as WalletTestRouteImport } from './routes/wallet-test'
 import { Route as WalletsRouteImport } from './routes/wallets'
 import { Route as ApiV1MerchantsRouteImport } from './routes/api/v1/merchants'
+import { Route as ApiV1PaymentProvidersRouteImport } from './routes/api/v1/payment-providers'
 import { Route as ApiV1AuthLoginRouteImport } from './routes/api/v1/auth/login'
 import { Route as ApiV1UsersSyncRouteImport } from './routes/api/v1/users/sync'
+import { Route as ApiV1WalletsReloadRouteImport } from './routes/api/v1/wallets/reload'
 import { Route as ApiV1UsersDependentsSyncRouteImport } from './routes/api/v1/users/dependents/sync'
 import { Route as ApiV1UsersMeBalanceRouteImport } from './routes/api/v1/users/me/balance'
 import { Route as ApiV1UsersMeDependentsRouteImport } from './routes/api/v1/users/me/dependents'
+import { Route as ApiV1WalletsReloadConfirmRouteImport } from './routes/api/v1/wallets/reload.confirm'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -56,6 +62,11 @@ const ClustersRoute = ClustersRouteImport.update({
   path: '/clusters',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoWalletRoute = DemoWalletRouteImport.update({
+  id: '/demo-wallet',
+  path: '/demo-wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DependentsRoute = DependentsRouteImport.update({
   id: '/dependents',
   path: '/dependents',
@@ -74,6 +85,11 @@ const MerchantsRoute = MerchantsRouteImport.update({
 const OrganizationsRoute = OrganizationsRouteImport.update({
   id: '/organizations',
   path: '/organizations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentTestRoute = PaymentTestRouteImport.update({
+  id: '/payment-test',
+  path: '/payment-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProvidersRoute = ProvidersRouteImport.update({
@@ -101,6 +117,11 @@ const UsersRoute = UsersRouteImport.update({
   path: '/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WalletTestRoute = WalletTestRouteImport.update({
+  id: '/wallet-test',
+  path: '/wallet-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WalletsRoute = WalletsRouteImport.update({
   id: '/wallets',
   path: '/wallets',
@@ -111,6 +132,11 @@ const ApiV1MerchantsRoute = ApiV1MerchantsRouteImport.update({
   path: '/api/v1/merchants',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1PaymentProvidersRoute = ApiV1PaymentProvidersRouteImport.update({
+  id: '/api/v1/payment-providers',
+  path: '/api/v1/payment-providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1AuthLoginRoute = ApiV1AuthLoginRouteImport.update({
   id: '/api/v1/auth/login',
   path: '/api/v1/auth/login',
@@ -119,6 +145,11 @@ const ApiV1AuthLoginRoute = ApiV1AuthLoginRouteImport.update({
 const ApiV1UsersSyncRoute = ApiV1UsersSyncRouteImport.update({
   id: '/api/v1/users/sync',
   path: '/api/v1/users/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1WalletsReloadRoute = ApiV1WalletsReloadRouteImport.update({
+  id: '/api/v1/wallets/reload',
+  path: '/api/v1/wallets/reload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiV1UsersDependentsSyncRoute =
@@ -137,6 +168,12 @@ const ApiV1UsersMeDependentsRoute = ApiV1UsersMeDependentsRouteImport.update({
   path: '/api/v1/users/me/dependents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1WalletsReloadConfirmRoute =
+  ApiV1WalletsReloadConfirmRouteImport.update({
+    id: '/confirm',
+    path: '/confirm',
+    getParentRoute: () => ApiV1WalletsReloadRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -144,22 +181,28 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/clusters': typeof ClustersRoute
+  '/demo-wallet': typeof DemoWalletRoute
   '/dependents': typeof DependentsRoute
   '/ledger': typeof LedgerRoute
   '/merchants': typeof MerchantsRoute
   '/organizations': typeof OrganizationsRoute
+  '/payment-test': typeof PaymentTestRoute
   '/providers': typeof ProvidersRoute
   '/registration': typeof RegistrationRoute
   '/transactions': typeof TransactionsRoute
   '/transfers': typeof TransfersRoute
   '/users': typeof UsersRoute
+  '/wallet-test': typeof WalletTestRoute
   '/wallets': typeof WalletsRoute
   '/api/v1/merchants': typeof ApiV1MerchantsRoute
+  '/api/v1/payment-providers': typeof ApiV1PaymentProvidersRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
   '/api/v1/users/sync': typeof ApiV1UsersSyncRoute
+  '/api/v1/wallets/reload': typeof ApiV1WalletsReloadRouteWithChildren
   '/api/v1/users/dependents/sync': typeof ApiV1UsersDependentsSyncRoute
   '/api/v1/users/me/balance': typeof ApiV1UsersMeBalanceRoute
   '/api/v1/users/me/dependents': typeof ApiV1UsersMeDependentsRoute
+  '/api/v1/wallets/reload/confirm': typeof ApiV1WalletsReloadConfirmRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -167,22 +210,28 @@ export interface FileRoutesByTo {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/clusters': typeof ClustersRoute
+  '/demo-wallet': typeof DemoWalletRoute
   '/dependents': typeof DependentsRoute
   '/ledger': typeof LedgerRoute
   '/merchants': typeof MerchantsRoute
   '/organizations': typeof OrganizationsRoute
+  '/payment-test': typeof PaymentTestRoute
   '/providers': typeof ProvidersRoute
   '/registration': typeof RegistrationRoute
   '/transactions': typeof TransactionsRoute
   '/transfers': typeof TransfersRoute
   '/users': typeof UsersRoute
+  '/wallet-test': typeof WalletTestRoute
   '/wallets': typeof WalletsRoute
   '/api/v1/merchants': typeof ApiV1MerchantsRoute
+  '/api/v1/payment-providers': typeof ApiV1PaymentProvidersRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
   '/api/v1/users/sync': typeof ApiV1UsersSyncRoute
+  '/api/v1/wallets/reload': typeof ApiV1WalletsReloadRouteWithChildren
   '/api/v1/users/dependents/sync': typeof ApiV1UsersDependentsSyncRoute
   '/api/v1/users/me/balance': typeof ApiV1UsersMeBalanceRoute
   '/api/v1/users/me/dependents': typeof ApiV1UsersMeDependentsRoute
+  '/api/v1/wallets/reload/confirm': typeof ApiV1WalletsReloadConfirmRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -191,22 +240,28 @@ export interface FileRoutesById {
   '/audit': typeof AuditRoute
   '/auth': typeof AuthRoute
   '/clusters': typeof ClustersRoute
+  '/demo-wallet': typeof DemoWalletRoute
   '/dependents': typeof DependentsRoute
   '/ledger': typeof LedgerRoute
   '/merchants': typeof MerchantsRoute
   '/organizations': typeof OrganizationsRoute
+  '/payment-test': typeof PaymentTestRoute
   '/providers': typeof ProvidersRoute
   '/registration': typeof RegistrationRoute
   '/transactions': typeof TransactionsRoute
   '/transfers': typeof TransfersRoute
   '/users': typeof UsersRoute
+  '/wallet-test': typeof WalletTestRoute
   '/wallets': typeof WalletsRoute
   '/api/v1/merchants': typeof ApiV1MerchantsRoute
+  '/api/v1/payment-providers': typeof ApiV1PaymentProvidersRoute
   '/api/v1/auth/login': typeof ApiV1AuthLoginRoute
   '/api/v1/users/sync': typeof ApiV1UsersSyncRoute
+  '/api/v1/wallets/reload': typeof ApiV1WalletsReloadRouteWithChildren
   '/api/v1/users/dependents/sync': typeof ApiV1UsersDependentsSyncRoute
   '/api/v1/users/me/balance': typeof ApiV1UsersMeBalanceRoute
   '/api/v1/users/me/dependents': typeof ApiV1UsersMeDependentsRoute
+  '/api/v1/wallets/reload/confirm': typeof ApiV1WalletsReloadConfirmRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -216,22 +271,28 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/clusters'
+    | '/demo-wallet'
     | '/dependents'
     | '/ledger'
     | '/merchants'
     | '/organizations'
+    | '/payment-test'
     | '/providers'
     | '/registration'
     | '/transactions'
     | '/transfers'
     | '/users'
+    | '/wallet-test'
     | '/wallets'
     | '/api/v1/merchants'
+    | '/api/v1/payment-providers'
     | '/api/v1/auth/login'
     | '/api/v1/users/sync'
+    | '/api/v1/wallets/reload'
     | '/api/v1/users/dependents/sync'
     | '/api/v1/users/me/balance'
     | '/api/v1/users/me/dependents'
+    | '/api/v1/wallets/reload/confirm'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -239,22 +300,28 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/clusters'
+    | '/demo-wallet'
     | '/dependents'
     | '/ledger'
     | '/merchants'
     | '/organizations'
+    | '/payment-test'
     | '/providers'
     | '/registration'
     | '/transactions'
     | '/transfers'
     | '/users'
+    | '/wallet-test'
     | '/wallets'
     | '/api/v1/merchants'
+    | '/api/v1/payment-providers'
     | '/api/v1/auth/login'
     | '/api/v1/users/sync'
+    | '/api/v1/wallets/reload'
     | '/api/v1/users/dependents/sync'
     | '/api/v1/users/me/balance'
     | '/api/v1/users/me/dependents'
+    | '/api/v1/wallets/reload/confirm'
   id:
     | '__root__'
     | '/'
@@ -262,22 +329,28 @@ export interface FileRouteTypes {
     | '/audit'
     | '/auth'
     | '/clusters'
+    | '/demo-wallet'
     | '/dependents'
     | '/ledger'
     | '/merchants'
     | '/organizations'
+    | '/payment-test'
     | '/providers'
     | '/registration'
     | '/transactions'
     | '/transfers'
     | '/users'
+    | '/wallet-test'
     | '/wallets'
     | '/api/v1/merchants'
+    | '/api/v1/payment-providers'
     | '/api/v1/auth/login'
     | '/api/v1/users/sync'
+    | '/api/v1/wallets/reload'
     | '/api/v1/users/dependents/sync'
     | '/api/v1/users/me/balance'
     | '/api/v1/users/me/dependents'
+    | '/api/v1/wallets/reload/confirm'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -286,19 +359,24 @@ export interface RootRouteChildren {
   AuditRoute: typeof AuditRoute
   AuthRoute: typeof AuthRoute
   ClustersRoute: typeof ClustersRoute
+  DemoWalletRoute: typeof DemoWalletRoute
   DependentsRoute: typeof DependentsRoute
   LedgerRoute: typeof LedgerRoute
   MerchantsRoute: typeof MerchantsRoute
   OrganizationsRoute: typeof OrganizationsRoute
+  PaymentTestRoute: typeof PaymentTestRoute
   ProvidersRoute: typeof ProvidersRoute
   RegistrationRoute: typeof RegistrationRoute
   TransactionsRoute: typeof TransactionsRoute
   TransfersRoute: typeof TransfersRoute
   UsersRoute: typeof UsersRoute
+  WalletTestRoute: typeof WalletTestRoute
   WalletsRoute: typeof WalletsRoute
   ApiV1MerchantsRoute: typeof ApiV1MerchantsRoute
+  ApiV1PaymentProvidersRoute: typeof ApiV1PaymentProvidersRoute
   ApiV1AuthLoginRoute: typeof ApiV1AuthLoginRoute
   ApiV1UsersSyncRoute: typeof ApiV1UsersSyncRoute
+  ApiV1WalletsReloadRoute: typeof ApiV1WalletsReloadRouteWithChildren
   ApiV1UsersDependentsSyncRoute: typeof ApiV1UsersDependentsSyncRoute
   ApiV1UsersMeBalanceRoute: typeof ApiV1UsersMeBalanceRoute
   ApiV1UsersMeDependentsRoute: typeof ApiV1UsersMeDependentsRoute
@@ -341,6 +419,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClustersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo-wallet': {
+      id: '/demo-wallet'
+      path: '/demo-wallet'
+      fullPath: '/demo-wallet'
+      preLoaderRoute: typeof DemoWalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dependents': {
       id: '/dependents'
       path: '/dependents'
@@ -367,6 +452,13 @@ declare module '@tanstack/react-router' {
       path: '/organizations'
       fullPath: '/organizations'
       preLoaderRoute: typeof OrganizationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-test': {
+      id: '/payment-test'
+      path: '/payment-test'
+      fullPath: '/payment-test'
+      preLoaderRoute: typeof PaymentTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/providers': {
@@ -404,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wallet-test': {
+      id: '/wallet-test'
+      path: '/wallet-test'
+      fullPath: '/wallet-test'
+      preLoaderRoute: typeof WalletTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallets': {
       id: '/wallets'
       path: '/wallets'
@@ -418,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1MerchantsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/payment-providers': {
+      id: '/api/v1/payment-providers'
+      path: '/api/v1/payment-providers'
+      fullPath: '/api/v1/payment-providers'
+      preLoaderRoute: typeof ApiV1PaymentProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/auth/login': {
       id: '/api/v1/auth/login'
       path: '/api/v1/auth/login'
@@ -430,6 +536,13 @@ declare module '@tanstack/react-router' {
       path: '/api/v1/users/sync'
       fullPath: '/api/v1/users/sync'
       preLoaderRoute: typeof ApiV1UsersSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/wallets/reload': {
+      id: '/api/v1/wallets/reload'
+      path: '/api/v1/wallets/reload'
+      fullPath: '/api/v1/wallets/reload'
+      preLoaderRoute: typeof ApiV1WalletsReloadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/v1/users/dependents/sync': {
@@ -453,8 +566,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1UsersMeDependentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/wallets/reload/confirm': {
+      id: '/api/v1/wallets/reload/confirm'
+      path: '/confirm'
+      fullPath: '/api/v1/wallets/reload/confirm'
+      preLoaderRoute: typeof ApiV1WalletsReloadConfirmRouteImport
+      parentRoute: typeof ApiV1WalletsReloadRoute
+    }
   }
 }
+
+interface ApiV1WalletsReloadRouteChildren {
+  ApiV1WalletsReloadConfirmRoute: typeof ApiV1WalletsReloadConfirmRoute
+}
+
+const ApiV1WalletsReloadRouteChildren: ApiV1WalletsReloadRouteChildren = {
+  ApiV1WalletsReloadConfirmRoute: ApiV1WalletsReloadConfirmRoute,
+}
+
+const ApiV1WalletsReloadRouteWithChildren =
+  ApiV1WalletsReloadRoute._addFileChildren(ApiV1WalletsReloadRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -462,19 +593,24 @@ const rootRouteChildren: RootRouteChildren = {
   AuditRoute: AuditRoute,
   AuthRoute: AuthRoute,
   ClustersRoute: ClustersRoute,
+  DemoWalletRoute: DemoWalletRoute,
   DependentsRoute: DependentsRoute,
   LedgerRoute: LedgerRoute,
   MerchantsRoute: MerchantsRoute,
   OrganizationsRoute: OrganizationsRoute,
+  PaymentTestRoute: PaymentTestRoute,
   ProvidersRoute: ProvidersRoute,
   RegistrationRoute: RegistrationRoute,
   TransactionsRoute: TransactionsRoute,
   TransfersRoute: TransfersRoute,
   UsersRoute: UsersRoute,
+  WalletTestRoute: WalletTestRoute,
   WalletsRoute: WalletsRoute,
   ApiV1MerchantsRoute: ApiV1MerchantsRoute,
+  ApiV1PaymentProvidersRoute: ApiV1PaymentProvidersRoute,
   ApiV1AuthLoginRoute: ApiV1AuthLoginRoute,
   ApiV1UsersSyncRoute: ApiV1UsersSyncRoute,
+  ApiV1WalletsReloadRoute: ApiV1WalletsReloadRouteWithChildren,
   ApiV1UsersDependentsSyncRoute: ApiV1UsersDependentsSyncRoute,
   ApiV1UsersMeBalanceRoute: ApiV1UsersMeBalanceRoute,
   ApiV1UsersMeDependentsRoute: ApiV1UsersMeDependentsRoute,

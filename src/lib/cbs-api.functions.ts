@@ -37,12 +37,12 @@ import jwt from "jsonwebtoken";
 /* Environment                                                               */
 /* -------------------------------------------------------------------------- */
 
-const CBS_WALLET_API_KEY = process.env['CBS_WALLET_API_KEY'];
+// Read per request: Cloudflare Workers inject env at request time.
+const walletApiKey = () => process.env['CBS_WALLET_API_KEY'];
 
-const CBS_USER_JWT_SECRET = process.env['CBS_USER_JWT_SECRET'];
+const jwtSecret = () => process.env['CBS_USER_JWT_SECRET'];
 
-const CBS_USER_JWT_EXPIRES_IN =
-  process.env['CBS_USER_JWT_EXPIRES_IN'] ?? "12h";
+const jwtExpiresIn = () => process.env['CBS_USER_JWT_EXPIRES_IN'] ?? "12h";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -198,7 +198,7 @@ function getBearerToken(request: Request): string {
 export function requireWalletApiClient(
   request: Request,
 ): CbsApiClient {
-  if (!CBS_WALLET_API_KEY) {
+  if (!walletApiKey()) {
     throw new Error(
       "CBS_WALLET_API_KEY is not configured.",
     );
@@ -206,7 +206,7 @@ export function requireWalletApiClient(
 
   const token = getBearerToken(request);
 
-  if (!safeCompare(token, CBS_WALLET_API_KEY)) {
+  if (!safeCompare(token, walletApiKey() ?? "")) {
     unauthorized("Invalid Wallet API credentials.");
   }
 
@@ -242,7 +242,7 @@ export function createUserAccessToken(
     walletNumber?: string | null;
   },
 ): string {
-  if (!CBS_USER_JWT_SECRET) {
+  if (!jwtSecret()) {
     throw new Error(
       "CBS_USER_JWT_SECRET is not configured.",
     );
@@ -260,9 +260,9 @@ export function createUserAccessToken(
 
   return jwt.sign(
     payload,
-    CBS_USER_JWT_SECRET as string,
+    jwtSecret() as jwt.Secret,
     {
-      expiresIn: CBS_USER_JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
+      expiresIn: jwtExpiresIn() as NonNullable<jwt.SignOptions["expiresIn"]>,
       issuer: "cbs",
       audience: "wallet",
     },
@@ -275,7 +275,7 @@ export function createUserAccessToken(
 export function verifyUserAccessToken(
   token: string,
 ): CbsAuthenticatedUser {
-  if (!CBS_USER_JWT_SECRET) {
+  if (!jwtSecret()) {
     throw new Error(
       "CBS_USER_JWT_SECRET is not configured.",
     );
@@ -284,7 +284,7 @@ export function verifyUserAccessToken(
   try {
     const decoded = jwt.verify(
       token,
-      CBS_USER_JWT_SECRET,
+      jwtSecret() as jwt.Secret,
       {
         issuer: "cbs",
         audience: "wallet",
@@ -363,8 +363,8 @@ export function requireCbsApiClient(
   const token = getBearerToken(request);
 
   if (
-    CBS_WALLET_API_KEY &&
-    safeCompare(token, CBS_WALLET_API_KEY)
+    walletApiKey() &&
+    safeCompare(token, walletApiKey() ?? "")
   ) {
     return {
       type: "WALLET",

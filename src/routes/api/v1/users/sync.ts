@@ -10,7 +10,7 @@ type UserRow = {
 }
 
 function authorized(request: Request): boolean {
-  const expected = process.env.CBS_SKOOLA_SYNC_API_KEY
+  const expected = process.env["CBS_SKOOLA_SYNC_API_KEY"]
   const provided =
     request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? ''
 
@@ -91,7 +91,7 @@ export const Route = createFileRoute('/api/v1/users/sync')({
           }
 
           if (
-            organization_id !== process.env.CBS_SKOOLA_ORGANIZATION_ID
+            organization_id !== process.env["CBS_SKOOLA_ORGANIZATION_ID"]
           ) {
             return Response.json(
               { success: false, message: 'Organization is not permitted.' },
@@ -112,7 +112,7 @@ export const Route = createFileRoute('/api/v1/users/sync')({
 
           if (existing.length > 0) {
             // Never modify an account belonging to another organization.
-            if (existing[0].organization_id !== organization_id) {
+            if (existing[0]!.organization_id !== organization_id) {
               return Response.json(
                 { success: false, message: 'User belongs to another organization.' },
                 { status: 403 }
@@ -135,7 +135,7 @@ export const Route = createFileRoute('/api/v1/users/sync')({
                   email ?? null,
                   mobile ?? null,
                   password_hash,
-                  existing[0].id,
+                  existing[0]!.id,
                   organization_id
                 ]
               )
@@ -154,7 +154,7 @@ export const Route = createFileRoute('/api/v1/users/sync')({
                   full_name,
                   email ?? null,
                   mobile ?? null,
-                  existing[0].id,
+                  existing[0]!.id,
                   organization_id
                 ]
               )
@@ -163,7 +163,7 @@ export const Route = createFileRoute('/api/v1/users/sync')({
             return Response.json({
               success: true,
               created: false,
-              userId: existing[0].id
+              userId: existing[0]!.id
             })
           }
 
