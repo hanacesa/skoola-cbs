@@ -14,6 +14,8 @@ export const Route = createFileRoute("/transactions")({
       },
       { property: "og:title", content: "Transactions — CBS Core Ledger" },
       { property: "og:description", content: "Posted, pending and reversed transaction history." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TransactionsPage,

@@ -16,6 +16,8 @@ export const Route = createFileRoute("/merchants")({
       },
       { property: "og:title", content: "Merchants — CBS Core Ledger" },
       { property: "og:description", content: "Acquiring merchants and their settlement cycles." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: MerchantsPage,

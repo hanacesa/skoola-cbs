@@ -14,6 +14,8 @@ export const Route = createFileRoute("/audit")({
       },
       { property: "og:title", content: "Audit Trail — CBS Core Ledger" },
       { property: "og:description", content: "Append-only audit trail of platform actions." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuditPage,

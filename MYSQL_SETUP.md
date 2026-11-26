@@ -73,13 +73,33 @@ CALL post_transaction(
 SELECT @txn;
 ```
 
-## Note on the live app
+## MySQL-only deployment
 
-The running portal in CBS still reads and writes its built-in cloud
-database — it cannot reach a MySQL server on your own machine or private
-network. To point the app at this MySQL database, it needs a MySQL host that
-accepts connections from the internet plus the credentials above; tell me the
-host and I will wire the app to it.
+CBS staff login, wallet APIs, ledger and portal data use MySQL exclusively.
+The demo wallet uses browser localStorage and the existing senangPay sandbox,
+without requiring MySQL. Neither requires Cloud environment settings.
+
+The editor maintains unused integration scaffolding; it cannot be deleted here.
+It is excluded from typechecking and has no application imports. The Cloud SDK
+is not an application dependency. `npm run check:mysql` rejects Cloud imports
+or environment requirements in CBS code; this check also runs before builds.
+
+For a source folder with **none of the editor-managed integration files**, run:
+
+```bash
+npm run export:mysql -- /tmp/cbs-mysql-source
+```
+
+Choose a new folder outside the project. The export excludes integration files,
+environment files, repository metadata, installed dependencies and old build
+output. Deploy that folder using your existing server setup, install dependencies
+again and rebuild; do not reuse the older server bundle. Keep your existing
+MySQL, `SESSION_SECRET`, `CREDENTIALS_KEY`, `CBS_WALLET_API_KEY`,
+`CBS_USER_JWT_SECRET` and senangPay settings on your server. Do not change the
+credential encryption key or reimport `database.sql` into your existing database.
+
+The preview cannot reach MySQL running at localhost on your server. Staff login
+and real-user wallet balance updates must be verified against your MySQL server.
 
 ## Detail profiles with account numbers
 

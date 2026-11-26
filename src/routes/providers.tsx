@@ -7,7 +7,7 @@ import { DataTable, PageHeader, StatusPill, type Column } from "@/components/adm
 import { Button } from "@/components/ui/button";
 import { useAuth, useRoles } from "@/hooks/useAuth";
 import { useTable } from "@/lib/queries";
-import { testPaymentProvider } from "@/lib/providers.functions";
+import { setProviderEnabled, testPaymentProvider } from "@/lib/providers.functions";
 import { cn } from "@/lib/utils";
 import { PlugAndPlayPanel } from "@/components/admin/PlugAndPlayPanel";
 
@@ -64,6 +64,8 @@ function ProvidersPage() {
   const isAdmin = roles?.includes("admin") ?? false;
 
   const testProvider = useServerFn(testPaymentProvider);
+  const toggleProvider = useServerFn(setProviderEnabled);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const providers = useTable<ProviderRow>("payment_providers", {
     select:
@@ -92,6 +94,23 @@ function ProvidersPage() {
     }
   }
 
+  async function toggle(r: ProviderRow) {
+    const on = !Number(r.enabled);
+    setBusyId(r.id);
+    setNotice(null);
+    try {
+      await toggleProvider({ data: { providerId: r.id, enabled: on } });
+      await providers.refetch();
+      setNotice({ tone: "success", text: `${r.name} switched ${on ? "ON" : "OFF"}.` });
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not switch provider." });
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  const activeProvider = (providers.data ?? []).find((p) => Number(p.enabled) && p.status === "ACTIVE");
+
   const providerColumns: Column<ProviderRow>[] = [
     { header: "Code", cell: (r) => <span className="figure text-xs">{r.code}</span> },
     { header: "Provider", cell: (r) => <span className="font-medium">{r.name}</span> },
@@ -110,7 +129,28 @@ function ProvidersPage() {
       header: "Key name",
       cell: (r) => <span className="figure text-xs text-muted-foreground">{r.credential_secret_name ?? "—"}</span>,
     },
-    { header: "Routing", cell: (r) => <StatusPill value={r.enabled ? "ACTIVE" : "SUSPENDED"} /> },
+    {
+      header: "On / Off",
+      cell: (r) => {
+        const on = Boolean(Number(r.enabled)) && r.status === "ACTIVE";
+        return (
+          <Button
+            type="button"
+            size="sm"
+            variant={on ? "default" : "outline"}
+            disabled={!isAdmin || busyId === r.id}
+            aria-label={`Switch ${r.name} ${on ? "off" : "on"}`}
+            onClick={() => void toggle(r)}
+          >
+            {busyId === r.id ? "…" : on ? "ON" : "OFF"}
+          </Button>
+        );
+      },
+    },
+    {
+      header: "Wallet uses",
+      cell: (r) => (activeProvider?.id === r.id ? <StatusPill value="ACTIVE" /> : <span className="text-xs text-muted-foreground">—</span>),
+    },
     { header: "Status", cell: (r) => <StatusPill value={r.status} /> },
     {
       header: "Check",

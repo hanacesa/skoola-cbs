@@ -473,3 +473,20 @@ export const setProviderEnvironment = createServerFn({ method: "POST" })
     await m.audit(staff.id, "SET_PROVIDER_ENVIRONMENT", "payment_providers", data.providerId, data);
     return { ok: true };
   });
+
+/** Switch a provider ON (used by wallet reloads) or OFF. Wallet API calls stay the same. */
+export const setProviderEnabled = createServerFn({ method: "POST" })
+  .inputValidator((input: { providerId: string; enabled: boolean }) =>
+    z.object({ providerId: z.string().uuid(), enabled: z.boolean() }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const m = await import("./mysql.server");
+    const staff = await m.requireAdmin();
+    await m.query("UPDATE payment_providers SET enabled = ?, status = ? WHERE id = ?", [
+      data.enabled ? 1 : 0,
+      data.enabled ? "ACTIVE" : "SUSPENDED",
+      data.providerId,
+    ]);
+    await m.audit(staff.id, data.enabled ? "PROVIDER_SWITCHED_ON" : "PROVIDER_SWITCHED_OFF", "payment_providers", data.providerId, data);
+    return { ok: true };
+  });

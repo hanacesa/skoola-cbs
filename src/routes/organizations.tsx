@@ -16,6 +16,8 @@ export const Route = createFileRoute("/organizations")({
       },
       { property: "og:title", content: "Organizations — CBS Core Ledger" },
       { property: "og:description", content: "Registered institutions and their operating status." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: OrganizationsPage,

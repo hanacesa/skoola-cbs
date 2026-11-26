@@ -14,6 +14,8 @@ export const Route = createFileRoute("/wallets")({
       },
       { property: "og:title", content: "Accounts & Wallets — CBS Core Ledger" },
       { property: "og:description", content: "Wallet balances, holds and parent accounts." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: WalletsPage,

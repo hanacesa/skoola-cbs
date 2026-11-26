@@ -14,6 +14,8 @@ export const Route = createFileRoute("/ledger")({
       },
       { property: "og:title", content: "General Ledger — CBS Core Ledger" },
       { property: "og:description", content: "Chart of accounts and double-entry ledger lines." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: LedgerPage,

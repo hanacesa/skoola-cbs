@@ -18,6 +18,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Live organizations, wallets, ledger and transaction activity.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Dashboard,

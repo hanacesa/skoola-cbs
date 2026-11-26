@@ -1,0 +1,1 @@
+export function checkMysqlOnly(root: string): Promise<void>;

@@ -14,6 +14,8 @@ export const Route = createFileRoute("/transfers")({
       },
       { property: "og:title", content: "Wallet Transfers — CBS Core Ledger" },
       { property: "og:description", content: "Wallet-to-wallet transfers and settlement status." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TransfersPage,

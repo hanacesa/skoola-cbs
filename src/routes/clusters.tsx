@@ -16,6 +16,8 @@ export const Route = createFileRoute("/clusters")({
       },
       { property: "og:title", content: "Clusters — CBS Core Ledger" },
       { property: "og:description", content: "Regional clusters beneath each organization." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ClustersPage,
